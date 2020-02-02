@@ -1,0 +1,64 @@
+@echo off
+setlocal enabledelayedexpansion
+
+set extensionList=%1
+	if not defined extensionList (
+echo:
+echo Please enter the extension list
+echo:
+set /p extensionList="list:	"
+)
+:dequote._.Array
+if defined extensionList (for /f "delims=" %%i in (!extensionList!) do (if exist %%~i set extensionList=%%~i))
+if defined extensionList (for /f "usebackq delims=" %%i in (!extensionList!) do (set extensionArray="%%~i" !extensionArray!))
+
+
+
+
+
+set getChromeEXE=dir /b /s "C:\Program Files (x86)\Google"\*chrome.exe
+set chromeCount=
+
+for /f "usebackq delims=" %%i in (`%getChromeEXE%`) do (
+set /a chromeCount+=1
+set chrome!chromeCount!="%%~i"
+)
+
+for /L %%i in (1,1,%chromeCount%) do (
+echo:[%%i] !chrome%%i!
+set choiceArray=!choiceArray!%%i
+
+)
+choice /c !choiceArray! /m "please pick one" /t 13 /d 1
+echo:!chrome%errorLevel%! -- !extensionArray!
+set app=!chrome%errorLevel%!
+set ext=!extensionArray!
+
+!app! -- !ext!
+
+
+
+
+goto:eof
+
+
+:getEXE
+
+
+set chrome=%1
+	if not defined chrome (
+	echo:
+	echo		Please choose a chrome executable
+	echo:
+		%getChromeEXE%
+)
+
+
+
+
+goto:eof
+
+:echoArray
+if defined extensionArray (echo:app -- !extensionArray!)
+goto:eof
+
